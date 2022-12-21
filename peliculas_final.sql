@@ -68,7 +68,7 @@ ALTER TABLE peliculas.actor OWNER TO postgres;
 
 CREATE TABLE peliculas.actua (
     nombre_personal_actor character varying NOT NULL,
-    año_peliculas smallint NOT NULL,
+    anno_peliculas smallint NOT NULL,
     titulo_peliculas character varying NOT NULL
 );
 
@@ -81,8 +81,8 @@ ALTER TABLE peliculas.actua OWNER TO postgres;
 
 CREATE TABLE peliculas.caratulas (
     tipo character varying NOT NULL,
-    tamaño smallint,
-    año_peliculas smallint NOT NULL,
+    tamanno smallint,
+    anno_peliculas smallint NOT NULL,
     titulo_peliculas character varying NOT NULL,
     nombre_pag_web character varying NOT NULL
 );
@@ -98,7 +98,7 @@ CREATE TABLE peliculas.criticas (
     critico character varying NOT NULL,
     puntuacion smallint,
     texto text,
-    año_peliculas smallint NOT NULL,
+    anno_peliculas smallint NOT NULL,
     titulo_peliculas character varying NOT NULL,
     nombre_pag_web character varying NOT NULL,
     fecha date
@@ -124,7 +124,7 @@ ALTER TABLE peliculas.director OWNER TO postgres;
 
 CREATE TABLE peliculas.generos (
     genero character varying NOT NULL,
-    año_peliculas smallint NOT NULL,
+    anno_peliculas smallint NOT NULL,
     titulo_peliculas character varying NOT NULL
 );
 
@@ -149,7 +149,7 @@ ALTER TABLE peliculas.pag_web OWNER TO postgres;
 --
 
 CREATE TABLE peliculas.peliculas (
-    año smallint NOT NULL,
+    anno smallint NOT NULL,
     titulo character varying NOT NULL,
     duracion smallint,
     idioma character(2),
@@ -178,7 +178,7 @@ ALTER TABLE peliculas.personal OWNER TO postgres;
 --
 
 CREATE TABLE public.actor_pelicula (
-    año integer,
+    anno integer,
     titulo text,
     actor text
 );
@@ -192,7 +192,7 @@ ALTER TABLE public.actor_pelicula OWNER TO postgres;
 
 CREATE TABLE public.actores (
     nombre text,
-    año_nacimiento date
+    anno_nacimiento date
 );
 
 
@@ -203,7 +203,7 @@ ALTER TABLE public.actores OWNER TO postgres;
 --
 
 CREATE TABLE public.comentarios (
-    año integer,
+    anno integer,
     titulo text,
     rating real,
     autor text,
@@ -221,7 +221,7 @@ ALTER TABLE public.comentarios OWNER TO postgres;
 
 CREATE TABLE public.director_pelicula (
     titulo text,
-    año integer,
+    anno integer,
     director text
 );
 
@@ -234,7 +234,7 @@ ALTER TABLE public.director_pelicula OWNER TO postgres;
 
 CREATE TABLE public.directores (
     nombre text,
-    año_nacimiento date
+    anno_nacimiento date
 );
 
 
@@ -245,7 +245,7 @@ ALTER TABLE public.directores OWNER TO postgres;
 --
 
 CREATE TABLE public.peliculas (
-    año character(4),
+    anno character(4),
     titulo character varying,
     genero character varying,
     puntuacion real,
@@ -1266,7 +1266,7 @@ Selena Gomez
 -- Data for Name: actua; Type: TABLE DATA; Schema: peliculas; Owner: postgres
 --
 
-COPY peliculas.actua (nombre_personal_actor, año_peliculas, titulo_peliculas) FROM stdin;
+COPY peliculas.actua (nombre_personal_actor, anno_peliculas, titulo_peliculas) FROM stdin;
 Sean Connery	1990	The Hunt for Red October
 Stellan Skarsgård	2011	Thor
 Dan Aykroyd	2001	Pearl Harbor
@@ -1446,7 +1446,7 @@ Alec Baldwin	1995	Two Bits
 -- Data for Name: caratulas; Type: TABLE DATA; Schema: peliculas; Owner: postgres
 --
 
-COPY peliculas.caratulas (tipo, tamaño, año_peliculas, titulo_peliculas, nombre_pag_web) FROM stdin;
+COPY peliculas.caratulas (tipo, tamanno, anno_peliculas, titulo_peliculas, nombre_pag_web) FROM stdin;
 \.
 
 
@@ -1454,7 +1454,7 @@ COPY peliculas.caratulas (tipo, tamaño, año_peliculas, titulo_peliculas, nombr
 -- Data for Name: criticas; Type: TABLE DATA; Schema: peliculas; Owner: postgres
 --
 
-COPY peliculas.criticas (critico, puntuacion, texto, año_peliculas, titulo_peliculas, nombre_pag_web, fecha) FROM stdin;
+COPY peliculas.criticas (critico, puntuacion, texto, anno_peliculas, titulo_peliculas, nombre_pag_web, fecha) FROM stdin;
 Andy Connor	8	A good movie even for a Documentary	2021	You're Watching Video Music Box	https://andysreviews.org/wordpress/andy_connor/you're_watching_video_music_box_2021	\N
 Andy Connor	8	I didn't understand the dialogues cause i don't speak swedish	1982	The Simple-Minded Murderer	https://andysreviews.org/wordpress/andy_connor/the_simple-minded_murderer_1982	\N
 Andy Connor	6	A good Documentary	2022	Gabby Giffords Won't Back Down	https://andysreviews.org/wordpress/andy_connor/gabby_giffords_won't_back_down_2022	\N
@@ -2602,8 +2602,8 @@ Alan J. Pakula
 Alan Mak
 Alan Parker
 Alejandro Amenábar
-Alejandro G. Iñárritu
-Alejandro González Iñárritu
+Alejandro G. Innárritu
+Alejandro González Innárritu
 Alex Garland
 Alex Proyas
 Alexander Mackendrick
@@ -2912,7 +2912,7 @@ Luc Besson
 Luc Dardenne
 Luchino Visconti
 Luis Bunuel
-Luis Buñuel
+Luis Bunnuel
 Lukas Moodysson
 M. Night Shyamalan
 Majid Majidi
@@ -3159,7 +3159,7 @@ Zach Braff
 -- Data for Name: generos; Type: TABLE DATA; Schema: peliculas; Owner: postgres
 --
 
-COPY peliculas.generos (genero, año_peliculas, titulo_peliculas) FROM stdin;
+COPY peliculas.generos (genero, anno_peliculas, titulo_peliculas) FROM stdin;
 Comedy	2017	The Boss Baby
 Thriller	2022	Deep Water
 History	2021	The Tragedy of Macbeth
@@ -7735,7 +7735,7 @@ https://myspace.us/claires_word/movies/claire_johnson/book_of_love_2022	\N	\N
 -- Data for Name: peliculas; Type: TABLE DATA; Schema: peliculas; Owner: postgres
 --
 
-COPY peliculas.peliculas (año, titulo, duracion, idioma, calificacion, nombre_personal_director) FROM stdin;
+COPY peliculas.peliculas (anno, titulo, duracion, idioma, calificacion, nombre_personal_director) FROM stdin;
 2022	The Wrath of God	97	es	\N	\N
 2021	The War Below	96	en	\N	\N
 2022	The House	97	en	\N	\N
@@ -9877,8 +9877,8 @@ Alan J. Pakula	\N	\N
 Alan Mak	\N	\N
 Alan Parker	\N	\N
 Alejandro Amenábar	\N	\N
-Alejandro G. Iñárritu	\N	\N
-Alejandro González Iñárritu	\N	\N
+Alejandro G. Innárritu	\N	\N
+Alejandro González Innárritu	\N	\N
 Alex Garland	\N	\N
 Alex Proyas	\N	\N
 Alexander Mackendrick	\N	\N
@@ -10173,7 +10173,7 @@ Luc Besson	\N	\N
 Luc Dardenne	\N	\N
 Luchino Visconti	\N	\N
 Luis Bunuel	\N	\N
-Luis Buñuel	\N	\N
+Luis Bunnuel	\N	\N
 Lukas Moodysson	\N	\N
 M. Night Shyamalan	\N	\N
 Majid Majidi	\N	\N
@@ -10411,7 +10411,7 @@ Zach Braff	\N	\N
 -- Data for Name: actor_pelicula; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.actor_pelicula (año, titulo, actor) FROM stdin;
+COPY public.actor_pelicula (anno, titulo, actor) FROM stdin;
 1992	Glengarry Glen Ross	Al Pacino
 1995	Two Bits	Al Pacino
 2002	Insomnia	Al Pacino
@@ -10629,7 +10629,7 @@ COPY public.actor_pelicula (año, titulo, actor) FROM stdin;
 -- Data for Name: actores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.actores (nombre, año_nacimiento) FROM stdin;
+COPY public.actores (nombre, anno_nacimiento) FROM stdin;
 Chris Hemsworth	\N
 Michael Lerner	\N
 Rosario Dawson	\N
@@ -11634,7 +11634,7 @@ Selena Gomez	\N
 -- Data for Name: comentarios; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.comentarios (año, titulo, rating, autor, texto, hash, pagina) FROM stdin;
+COPY public.comentarios (anno, titulo, rating, autor, texto, hash, pagina) FROM stdin;
 2021	You're Watching Video Music Box	7.7	Andy Connor	A good movie even for a Documentary	696ed7e99573ceab99df12a219dae0dc	https://andysreviews.org/wordpress/andy_connor/you're_watching_video_music_box_2021
 1982	The Simple-Minded Murderer	7.6	Andy Connor	I didn't understand the dialogues cause i don't speak swedish	3d473f434cde8dee40278a3e86d6571d	https://andysreviews.org/wordpress/andy_connor/the_simple-minded_murderer_1982
 2022	Gabby Giffords Won't Back Down	6.2	Andy Connor	A good Documentary	2d7b8dde189fb9eda0425cb0b56fc000	https://andysreviews.org/wordpress/andy_connor/gabby_giffords_won't_back_down_2022
@@ -12771,7 +12771,7 @@ COPY public.comentarios (año, titulo, rating, autor, texto, hash, pagina) FROM 
 -- Data for Name: director_pelicula; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.director_pelicula (titulo, año, director) FROM stdin;
+COPY public.director_pelicula (titulo, anno, director) FROM stdin;
 Clue	1985	\N
 Miami Blues	1990	George Armitage
 Stardust	2007	Matthew Vaughn
@@ -12926,7 +12926,7 @@ Breaking the Waves	1996	Lars Von Trier
 -- Data for Name: directores; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.directores (nombre, año_nacimiento) FROM stdin;
+COPY public.directores (nombre, anno_nacimiento) FROM stdin;
 Aamir Khan	\N
 Abdellatif Kechiche	\N
 Abel Gance	\N
@@ -12937,8 +12937,8 @@ Alan J. Pakula	\N
 Alan Mak	\N
 Alan Parker	\N
 Alejandro Amenábar	\N
-Alejandro G. Iñárritu	\N
-Alejandro González Iñárritu	\N
+Alejandro G. Innárritu	\N
+Alejandro González Innárritu	\N
 Alex Garland	\N
 Alex Proyas	\N
 Alexander Mackendrick	\N
@@ -13247,7 +13247,7 @@ Luc Besson	\N
 Luc Dardenne	\N
 Luchino Visconti	\N
 Luis Bunuel	\N
-Luis Buñuel	\N
+Luis Bunnuel	\N
 Lukas Moodysson	\N
 M. Night Shyamalan	\N
 Majid Majidi	\N
@@ -13494,7 +13494,7 @@ Zach Braff	\N
 -- Data for Name: peliculas; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
-COPY public.peliculas (año, titulo, genero, puntuacion, duracion_min, idioma, calificacion) FROM stdin;
+COPY public.peliculas (anno, titulo, genero, puntuacion, duracion_min, idioma, calificacion) FROM stdin;
 2018	The Public	Action Drama	6.6	119 mins	en	PG-13
 2019	Before You Know It	Action Comedy Drama	5.2	98 mins	en	\N
 2000	Dancer in the Dark	Action Crime Drama Musical	7.9	140 mins	en	R
@@ -14639,7 +14639,7 @@ ALTER TABLE ONLY peliculas.actor
 --
 
 ALTER TABLE ONLY peliculas.actua
-    ADD CONSTRAINT actua_pk PRIMARY KEY (nombre_personal_actor, año_peliculas, titulo_peliculas);
+    ADD CONSTRAINT actua_pk PRIMARY KEY (nombre_personal_actor, anno_peliculas, titulo_peliculas);
 
 
 --
@@ -14647,7 +14647,7 @@ ALTER TABLE ONLY peliculas.actua
 --
 
 ALTER TABLE ONLY peliculas.caratulas
-    ADD CONSTRAINT caratulas_pk PRIMARY KEY (tipo, año_peliculas, titulo_peliculas);
+    ADD CONSTRAINT caratulas_pk PRIMARY KEY (tipo, anno_peliculas, titulo_peliculas);
 
 
 --
@@ -14655,7 +14655,7 @@ ALTER TABLE ONLY peliculas.caratulas
 --
 
 ALTER TABLE ONLY peliculas.criticas
-    ADD CONSTRAINT criticas_pk PRIMARY KEY (critico, año_peliculas, titulo_peliculas);
+    ADD CONSTRAINT criticas_pk PRIMARY KEY (critico, anno_peliculas, titulo_peliculas);
 
 
 --
@@ -14671,7 +14671,7 @@ ALTER TABLE ONLY peliculas.director
 --
 
 ALTER TABLE ONLY peliculas.generos
-    ADD CONSTRAINT generos_pk PRIMARY KEY (genero, año_peliculas, titulo_peliculas);
+    ADD CONSTRAINT generos_pk PRIMARY KEY (genero, anno_peliculas, titulo_peliculas);
 
 
 --
@@ -14687,7 +14687,7 @@ ALTER TABLE ONLY peliculas.pag_web
 --
 
 ALTER TABLE ONLY peliculas.peliculas
-    ADD CONSTRAINT peliculas_pk PRIMARY KEY (año, titulo);
+    ADD CONSTRAINT peliculas_pk PRIMARY KEY (anno, titulo);
 
 
 --
@@ -14735,7 +14735,7 @@ ALTER TABLE ONLY peliculas.caratulas
 --
 
 ALTER TABLE ONLY peliculas.actua
-    ADD CONSTRAINT peliculas_fk FOREIGN KEY (año_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(año, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT peliculas_fk FOREIGN KEY (anno_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(anno, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -14743,7 +14743,7 @@ ALTER TABLE ONLY peliculas.actua
 --
 
 ALTER TABLE ONLY peliculas.generos
-    ADD CONSTRAINT peliculas_fk FOREIGN KEY (año_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(año, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT peliculas_fk FOREIGN KEY (anno_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(anno, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -14751,7 +14751,7 @@ ALTER TABLE ONLY peliculas.generos
 --
 
 ALTER TABLE ONLY peliculas.criticas
-    ADD CONSTRAINT peliculas_fk FOREIGN KEY (año_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(año, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT peliculas_fk FOREIGN KEY (anno_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(anno, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
@@ -14759,7 +14759,7 @@ ALTER TABLE ONLY peliculas.criticas
 --
 
 ALTER TABLE ONLY peliculas.caratulas
-    ADD CONSTRAINT peliculas_fk FOREIGN KEY (año_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(año, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
+    ADD CONSTRAINT peliculas_fk FOREIGN KEY (anno_peliculas, titulo_peliculas) REFERENCES peliculas.peliculas(anno, titulo) MATCH FULL ON UPDATE CASCADE ON DELETE CASCADE;
 
 
 --
