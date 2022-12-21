@@ -14805,7 +14805,18 @@ CREATE TABLE peliculas.auditoria(
     evento text,
     tabla text,
     usuario text,
-    fecha date
+    fecha timestamp
 );
 
+-- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
+CREATE TRIGGER log_auditoria
+AFTER INSERT OR UPDATE OR DELETE ON ALL TABLES IN SCHEMA peliculas
+FOR EACH ROW
+BEGIN
+    INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha);
+
+
+
+
+END;
