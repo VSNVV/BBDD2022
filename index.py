@@ -16,4 +16,5 @@ def main():
     cursor = connection.cursor()
     
     cursor.execute('select * from peliculas.peliculas')
+    #TEST
     
