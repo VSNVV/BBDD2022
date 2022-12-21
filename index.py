@@ -31,25 +31,3 @@ def executer(command: str):
     connection.close()
 
 # Programa Principal
-opcion = 1
-while(not opcion.__eq__(0)):
-    print('\t\t-------------=[Menú Del Programa]=-------------\n')
-    print('\t1. Realizar una consulta\n\t2. Insertar datos\n\t3. Modificar datos\n\t4. Salir del programa')
-    opcion = int(input('\nElige opcion introduciendo su numero: '))
-    if opcion.__eq__(1):
-        command = str(input('Introduce la consulta SQL a realizar (con ; al final): '))
-        executer(command)
-    elif opcion.__eq__(2):
-        command = str(input('Introduce la consulta SQL a realizar (con ; al final): '))
-        if ('insert' in command):
-            executer(command)
-        else:
-            print('Esta consulta no inserta datos')
-    elif opcion.__eq__(3):
-        command = str(input('Introduce la consulta para insertar datos'))
-        executer(command)
-    elif opcion.__eq__(0):
-        # Salimos del bucle while y termina el programa
-        break
-    else:
-        print('Opcion incorrecta o numero fuera de rango')
