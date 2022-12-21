@@ -1,16 +1,20 @@
 # ------------ [LIBRERIAS NECESARIAS] ------------
 
 import psycopg2
+from dotenv import load_dotenv
+import os
 
 # ------------ [FUNCIONES DEFINIDAS] ------------
 
+# Función para establecer conexxion con la base de datos
 # Función main (método principal)
 def main():
     '''
     En primer lugar tenemos que establecer la conexion al servidor, que en este caso es una base de datos
     '''
-    connection_info = 'host=localhost port=5432 user=postgres password=bbdd dbname=peliculas_final'
-    connection = psycopg2.connect(connection_info)
+    load_dotenv()
+    server = os.getenv('server_info')
+    connection = psycopg2.connect(server)
     
     # Una vez la xonexión establecida, creamos el cursor para cargar el contenido de la consultas
     cursor = connection.cursor()
@@ -23,8 +27,8 @@ def main():
     
     # Cerramos la conexión
 
-    cursor.close
-    connection.close
+    cursor.close()
+    connection.close()
 
 # Programa Principal
 
