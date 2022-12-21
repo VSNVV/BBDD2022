@@ -14793,10 +14793,10 @@ CREATE USER cliente PASSWORD 'cliente';
 
 -- Una vez creados todos los usuarios, les damos permisos a cada uno de ellos
 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO administrador WITH GRANT OPTION; -- Un administrador tiene todos los permisos, y tambien puede administrar los permisos de otros usuarios
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO administrador WITH GRANT OPTION; -- Un administrador tiene todos los permisos, y tambien puede administrar los permisos de otros usuarios
 REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico; -- Le quitamos todos los permisos que puedan tener estos roles por defecto
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA peliculas TO gestor; -- Un gestor puede modificar todas las tablas, pero no crear tablas
-GRANT SELECT, INSERT ON peliculas.criticas TO critico; -- Un critico solo podra consultar e insertar informacion en la tabla de críticas, pero no en ninguna otra
+GRANT SELECT, INSERT ON criticas IN SCHEMA peliculas TO critico; -- Un critico solo podra consultar e insertar informacion en la tabla de críticas, pero no en ninguna otra
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo podrá consultar información en todas las tablas, pero no podrá modificar nada
 
 
