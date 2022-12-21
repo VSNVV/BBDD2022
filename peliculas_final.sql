@@ -14794,7 +14794,7 @@ CREATE USER cliente PASSWORD 'cliente';
 -- Una vez creados todos los usuarios, les damos permisos a cada uno de ellos
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO administrador WITH GRANT OPTION; -- Un administrador tiene todos los permisos, y tambien puede administrar los permisos de otros usuarios
-REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico; -- Un gestor, ni tampoco un critico no tendrá los mismos permisos que un administrador
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico; -- Le quitamos todos los permisos que puedan tener estos roles por defecto
 GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA peliculas TO gestor; -- Un gestor puede modificar todas las tablas, pero no crear tablas
 GRANT SELECT, INSERT ON peliculas.criticas TO critico; -- Un critico solo podra consultar e insertar informacion en la tabla de críticas, pero no en ninguna otra
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo podrá consultar información en todas las tablas, pero no podrá modificar nada
@@ -14810,13 +14810,23 @@ CREATE TABLE peliculas.auditoria(
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
-CREATE TRIGGER log_auditoria
-AFTER INSERT OR UPDATE OR DELETE ON ALL TABLES IN SCHEMA peliculas
-FOR EACH ROW
-BEGIN
-    INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha);
+-- Creamos la funcion que ejecutará el trigger
 
+CREATE OR REPLACE FUNCTION fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
+    BEGIN
+        IF TG_OP = 'INSERT' THEN
+            INSERT INTO peliculas.auditoria VALUES ('Insert', tabla, usuario, current_timestamp);
+        ELSIF TG_OP = 'UPDATE' THEN
+            INSERT INTO peliculas.auditoria VALUES ('Modificacion', tabla, usuario, current_timestamp);
+        ELSIF TG_OP = 'DELETE' THEN
+            INSERT INTO peliculas.auditoria VALUES ('Borrado', tabla, usuario, current_timestamp);
+        END IF;
+        RETURN NULL;
+    END;
+$fn_auditoria$ LANGUAGE plpgsql;
 
+-- Una vez codificada la funcion a realizar, creamos el trigger, asociandole la funcion codificado anteriormente
 
-
-END;
+CREATE TRIGGER tg_auditoria after INSERT or UPDATE or DELETE
+  ON SALA FOR EACH ROW
+  EXECUTE PROCEDURE fn_auditoria(); 
