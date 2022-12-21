@@ -49,6 +49,7 @@ while(not opcion.__eq__(0)):
         command = str(input('Introduce la consulta para insertar datos'))
         executer(command)
     elif opcion.__eq__(0):
+        # Salimos del bucle while y termina el programa
         break
     else:
         print('Opcion incorrecta o numero fuera de rango')
