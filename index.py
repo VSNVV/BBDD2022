@@ -7,7 +7,7 @@ import os
 # ------------ [FUNCIONES DEFINIDAS] ------------
 
 # Función para establecer conexxion con la base de datos
-# Función main (método principal)
+# Función executer, cada vez que se quiere enviar una consulta al servidor se deberá llamar a esta función
 def executer(command: str):
     '''
     En primer lugar tenemos que establecer la conexion al servidor, que en este caso es una base de datos
