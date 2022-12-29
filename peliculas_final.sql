@@ -14786,19 +14786,20 @@ ALTER TABLE ONLY peliculas.director
 
 -- En primer lugar, creamos los usuarios
 
-CREATE USER administrador PASSWORD 'administrador';
-CREATE USER gestor PASSWORD 'gestor';
-CREATE USER critico PASSWORD 'critico';
-CREATE USER cliente PASSWORD 'cliente';
+CREATE USER administrador PASSWORD 'administrador'; -- Creamos el rol de administrador
+CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
+CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
+CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 
 -- Una vez creados todos los usuarios, les damos permisos a cada uno de ellos
 
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO administrador WITH GRANT OPTION; -- Un administrador tiene todos los permisos, y tambien puede administrar los permisos de otros usuarios
-REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico; -- Le quitamos todos los permisos que puedan tener estos roles por defecto
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA peliculas TO gestor; -- Un gestor puede modificar todas las tablas, pero no crear tablas
-GRANT SELECT, INSERT ON criticas IN SCHEMA peliculas TO critico; -- Un critico solo podra consultar e insertar informacion en la tabla de críticas, pero no en ninguna otra
-GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo podrá consultar información en todas las tablas, pero no podrá modificar nada
-
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos que puedan tener el usuario gestor, critico y cliente
+GRANT USAGE ON SCHEMA peliculas TO administrador, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO administrador; -- El administrador tiene todos los privilegios para realizar cualquier operación sobre la base de datos
+GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
+GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
+GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
+GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un cliente solo puede consultar el contenido de las tablas
 
 -- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
 CREATE TABLE peliculas.auditoria(
@@ -14811,22 +14812,3 @@ CREATE TABLE peliculas.auditoria(
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
 -- Creamos la funcion que ejecutará el trigger
-
-CREATE OR REPLACE FUNCTION fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
-    BEGIN
-        IF TG_OP = 'INSERT' THEN
-            INSERT INTO peliculas.auditoria VALUES ('Insert', tabla, usuario, current_timestamp);
-        ELSIF TG_OP = 'UPDATE' THEN
-            INSERT INTO peliculas.auditoria VALUES ('Modificacion', tabla, usuario, current_timestamp);
-        ELSIF TG_OP = 'DELETE' THEN
-            INSERT INTO peliculas.auditoria VALUES ('Borrado', tabla, usuario, current_timestamp);
-        END IF;
-        RETURN NULL;
-    END;
-$fn_auditoria$ LANGUAGE plpgsql;
-
--- Una vez codificada la funcion a realizar, creamos el trigger, asociandole la funcion codificado anteriormente
-
-CREATE TRIGGER tg_auditoria after INSERT or UPDATE or DELETE
-  ON SALA FOR EACH ROW
-  EXECUTE PROCEDURE fn_auditoria(); 
