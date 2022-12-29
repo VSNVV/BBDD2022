@@ -14794,14 +14794,15 @@ CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 -- Una vez creados todos los usuarios, les damos permisos a cada uno de ellos
 
 REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos que puedan tener el usuario gestor, critico y cliente
-GRANT USAGE ON SCHEMA peliculas TO administrador, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO administrador; -- El administrador tiene todos los privilegios para realizar cualquier operación sobre la base de datos
+GRANT USAGE ON SCHEMA peliculas TO admin, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO admin; -- El administrador tiene todos los privilegios para realizar cualquier operación sobre la base de datos
 GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
 GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
-GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un cliente solo puede consultar el contenido de las tablas
+GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo puede consultar el contenido de las tablas
 
 -- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
+
 CREATE TABLE peliculas.auditoria(
     evento text,
     tabla text,
@@ -14811,4 +14812,28 @@ CREATE TABLE peliculas.auditoria(
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
+CREATE OR REPLACE FUNCTION fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
+  DECLARE
+  --  no declaro nada porque no me hace falta...de hecho DECLARE podría haberlo omitido en éste caso
+  BEGIN
+  -- Se determina que acción ha activado el trigger e inserta un nuevo valor en la tabla dependiendo de dicha acción
+  -- Junto con la acción se escribe la fecha y la hora en la que se ha producido la acción
+   IF TG_OP = 'INSERT' THEN
+     INSERT INTO auditoria VALUES ('alta',current_timestamp);  -- Cuando hay una inserción
+   ELSIF TG_OP = 'UPDATE'	THEN
+     INSERT INTO auditoria VALUES ('modificación',current_timestamp); -- Cuando hay una modificación
+   ELSEIF TG_OP = 'DELETE' THEN
+     INSERT INTO auditoria VALUES ('borrado',current_timestamp); -- Cuando hay un borrado
+   END IF;	 
+   RETURN NULL;
+  END;
+$fn_auditoria$ LANGUAGE plpgsql;
+
+
 -- Creamos la funcion que ejecutará el trigger
+
+-- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla peliculas
+
+CREATE TRIGGER tg_auditoria after INSERT or UPDATE or DELETE
+  ON peliculas.auditoria FOR EACH ROW
+  EXECUTE PROCEDURE fn_auditoria(); 
