@@ -14799,7 +14799,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO administrador; -- El a
 GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
 GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
-GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un cliente solo puede consultar el contenido de las tablas
+GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo puede consultar el contenido de las tablas
 
 -- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
 CREATE TABLE peliculas.auditoria(
