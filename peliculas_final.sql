@@ -14786,7 +14786,7 @@ ALTER TABLE ONLY peliculas.director
 
 -- En primer lugar, creamos los usuarios
 
-CREATE USER administrador PASSWORD 'administrador'; -- Creamos el rol de administrador
+CREATE USER admin PASSWORD 'admin'; -- Creamos el rol de administrador
 CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
 CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
 CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
