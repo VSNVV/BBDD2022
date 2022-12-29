@@ -100,4 +100,4 @@ while (running):
 
 print('Cerrando...')
 time.sleep(0.5)
-print('\t\t-----------------=[PROGRAMA FINALIZADO]=----------------')
+print('\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------')
