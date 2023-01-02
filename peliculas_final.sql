@@ -14805,35 +14805,25 @@ GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo pu
 
 CREATE TABLE peliculas.auditoria(
     evento text,
-    tabla text,
+    tabla name,
     usuario text,
     fecha timestamp
 );
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
-CREATE OR REPLACE FUNCTION fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
-  DECLARE
-  --  no declaro nada porque no me hace falta...de hecho DECLARE podría haberlo omitido en éste caso
-  BEGIN
-  -- Se determina que acción ha activado el trigger e inserta un nuevo valor en la tabla dependiendo de dicha acción
-  -- Junto con la acción se escribe la fecha y la hora en la que se ha producido la acción
-   IF TG_OP = 'INSERT' THEN
-     INSERT INTO auditoria VALUES ('alta',current_timestamp);  -- Cuando hay una inserción
-   ELSIF TG_OP = 'UPDATE'	THEN
-     INSERT INTO auditoria VALUES ('modificación',current_timestamp); -- Cuando hay una modificación
-   ELSEIF TG_OP = 'DELETE' THEN
-     INSERT INTO auditoria VALUES ('borrado',current_timestamp); -- Cuando hay un borrado
-   END IF;	 
-   RETURN NULL;
-  END;
-$fn_auditoria$ LANGUAGE plpgsql;
+CREATE FUNCTION fn_auditoria() RETURNS TRUGGER AS $fn_auditoria$
+BEGIN
+    IF TG_OP = 'INSERT' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_RELNAME, current_user, now());
+    ELSIF TG_OP = 'UPDATE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('UPDATE', TG_RELNAME, current_user, now());
+    ELSIF TG_OP = 'DELETE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('DELETE', TG_RELNAME, current_user, now());
+    END IF;
+    RETURN NULL;
+END
+$fn_auditoria$ LANGUAGE plpsql;
 
-
--- Creamos la funcion que ejecutará el trigger
-
--- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla peliculas
+-- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla 
 
 CREATE TRIGGER tg_auditoria after INSERT or UPDATE or DELETE
-  ON peliculas.auditoria FOR EACH ROW
-  EXECUTE PROCEDURE fn_auditoria(); 
+  ON ALL TABLES IN SCHEMA peliculas FOR EACH ROW
+  EXECUTE PROCEDURE fn_auditoria();
