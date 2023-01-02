@@ -77,6 +77,8 @@ def execute(sql_command: str):
 # ------------=[PROGRAMA PRINCIPAL]=------------
 
 # Primero debemos preguntar por qué usuario se va a realizar la consulta
+
+os.system('cls')
 running = True
 
 while (running):
@@ -95,6 +97,7 @@ while (running):
             succeded = True
         elif (more_commands.__eq__('si')):
             succeded = True
+            os.system('cls')
         else:
             print('Escriba una opcion valida (si / no): ')
 

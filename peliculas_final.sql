@@ -14824,6 +14824,44 @@ $fn_auditoria$ LANGUAGE plpgsql;
 
 -- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla 
 
-CREATE TRIGGER tg_auditoria AFTER INSERT OR UPDATE OR DELETE
-  ON peliculas.criticas FOR EACH ROW
-  EXECUTE FUNCTION peliculas.fn_auditoria();
+CREATE TRIGGER tg_auditoria AFTER INSERT OR UPDATE OR DELETE ON peliculas.criticas FOR EACH ROW EXECUTE FUNCTION peliculas.fn_auditoria();
+
+-- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
+
+CREATE OR REPLACE FUNCTION peliculas.fn_inserta_critica() RETURNS TRIGGER AS $fn_inserta_critica$
+DECLARE
+
+BEGIN
+    -- Nos fijamos en los campos de la tabla peliculas.criticas que tienen NOT NULL, y los tendremos que poner como condición d a tener antes de insertar la crítica
+    -- Primero deberemos comprobar que el usuario da una pagina web en al consulta, si no se le dará error
+    IF NEW.critico ISNULL THEN
+        RAISE EXCEPTION ’’El nombre del critico no puede ser nulo, debes imprimir uno’’;
+    END IF;
+
+    IF NEW.anno_peliculas ISNULL THEN
+        RAISE EXCEPTION ’’El anno de la pelicula no puede ser nulo, debes aportar uno’’;
+    END IF;
+
+    IF NEW.titulo_peliculas ISNULL THEN
+        RAISE EXCEPTION ’’El titulo de la pelicula no puede tener valor nulo, debes aportar uno’’;
+    END IF;
+
+    IF NEW.nombre_pag_web ISNULL THEN
+        RAISE EXCEPTION ’’El nombre o url de la pagina web no puede ser nulo, debes aportar uno’’;
+    END IF;
+    
+    -- Si se ha llegado hasta este punto podemos asegurar que la consulta es correcta y contiene todo los campos necesarios para insertar, ahora debemos comprobar
+    -- si la pagina web está presente en la pagina web, o si no añadirla, al igual que el titulo y año de la pelicula que esten presentes en la tabla de peliculas
+
+    IF NEW.nombre_pag_web NOT IN (SELECT nombre FROM peliculas.pag_web) THEN
+        -- Se verifica que la pagina web no está en la tabla de peliculas.pag_web, por tanto tenemos que añadirla
+        INSERT INTO peliculas.pag_web(nombre) VALUES (NEW.nombre_pag_web)
+    END IF;
+
+    IF NEW.titulo_peliculas, NEW.anno_peliculas NOT IN (SELECT titulo, anno FROM peliculas.peliculas) THEN
+        -- Se verifica que el titulo no está presente en peliculas, por tanto daremos el error de que no existe la pelicula en la base de datos
+        RAISE EXCEPTION ’’La pelicula ’’, NEW.titulo_peliculas, ’’ publicada en el año ’’, NEW.anno_peliculas, ’’ no esta presente en la base de datos’’;
+    END IF;
+    
+END
+$fn_inserta_critica$ LANGUAGE plpgsql;
