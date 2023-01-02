@@ -14810,7 +14810,7 @@ CREATE TABLE peliculas.auditoria(
     fecha timestamp
 );
 
--- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla 
+-- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
 CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
 BEGIN
