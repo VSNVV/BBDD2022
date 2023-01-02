@@ -14812,18 +14812,18 @@ CREATE TABLE peliculas.auditoria(
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
-CREATE OR REPLACE FUNCTION fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
+CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
 BEGIN
     IF TG_OP = 'INSERT' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_RELNAME, current_user, now());
     ELSIF TG_OP = 'UPDATE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('UPDATE', TG_RELNAME, current_user, now());
     ELSIF TG_OP = 'DELETE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('DELETE', TG_RELNAME, current_user, now());
     END IF;
-    RETURN NULL;
+    RETURN NEW;
 END
-$fn_auditoria$ LANGUAGE plpsql;
+$fn_auditoria$ LANGUAGE plpgsql;
 
 -- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla 
 
 CREATE TRIGGER tg_auditoria AFTER INSERT OR UPDATE OR DELETE
   ON peliculas.criticas FOR EACH ROW
-  EXECUTE FUNCTION fn_auditoria();
+  EXECUTE FUNCTION peliculas.fn_auditoria();
