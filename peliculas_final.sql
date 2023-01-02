@@ -14784,7 +14784,16 @@ ALTER TABLE ONLY peliculas.director
 
 ---------------=[SECCION EDITADA POR NOSOTROS]=---------------
 
--- En primer lugar, creamos los usuarios
+-- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
+
+CREATE TABLE peliculas.auditoria(
+    evento text,
+    tabla name,
+    usuario text,
+    fecha timestamp
+);
+
+-- Despues, creamos los usuarios
 
 CREATE USER admin PASSWORD 'admin'; -- Creamos el rol de administrador
 CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
@@ -14800,15 +14809,6 @@ GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
 GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo puede consultar el contenido de las tablas
-
--- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
-
-CREATE TABLE peliculas.auditoria(
-    evento text,
-    tabla name,
-    usuario text,
-    fecha timestamp
-);
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
@@ -14865,7 +14865,7 @@ BEGIN
 
     -- Si ha ido todo bien, aceptaremos la consulta
 
-    RETURN NULL;
+    RETURN NEW;
 END;
 
 $fn_inserta_critica$ LANGUAGE plpgsql;
@@ -14875,4 +14875,4 @@ CREATE TRIGGER tg_inserta_critica BEFORE INSERT
     EXECUTE FUNCTION peliculas.fn_inserta_critica();
 
 
-INSERT INTO peliculas.criticas VALUES ('Jorgito', 5, 'No es una peli de furbo', 2070, 'The House', 'https://www.google.es');
+INSERT INTO peliculas.criticas VALUES ('Jorgito', 5, 'No es una peli de furbo', 2022, 'The House', 'https://www.google.es');
