@@ -14862,6 +14862,8 @@ BEGIN
         -- Se verifica que el titulo no está presente en peliculas, por tanto daremos el error de que no existe la pelicula en la base de datos
         RAISE EXCEPTION ’’La pelicula ’’, NEW.titulo_peliculas, ’’ publicada en el año ’’, NEW.anno_peliculas, ’’ no esta presente en la base de datos’’;
     END IF;
-    
+
 END
 $fn_inserta_critica$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tg_inserta_critica BEFORE INSERT ON peliculas.criticas FOR EACH ROW EXECUTE FUNCTION peliculas.fn_inserta_critica();
