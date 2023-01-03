@@ -69,10 +69,9 @@ def execute(sql_command: str):
     global connection
     global cursor
     cursor.execute(sql_command)
-
-    # El cursos cargará todos los valores de la tabla peliculas.criticas
-    for critico, puntacion, texto, anno_peliculas, titulo_peliculas, nombre_pag_web, fecha in cursor.fetchall():
-        print(critico, puntacion, texto, anno_peliculas, titulo_peliculas, nombre_pag_web, fecha)
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row)
 
 # ------------=[PROGRAMA PRINCIPAL]=------------
 
@@ -87,7 +86,7 @@ while (running):
     # Escribimos la consulta a ejecutar:
     sql_command = str(input('Introduce la consulta a realizar: '))
     # Una vez escrita la consulta, la ejecutamos
-    execute(sql_command)
+    execute('SELECT * FROM peliculas.criticas')
     more_commands = str(input('\n\n¿Desea hacer mas consultas? (si / no): '))
     succeded = False
     while (not succeded):
