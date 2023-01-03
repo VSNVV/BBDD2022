@@ -14813,7 +14813,7 @@ CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 
 REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos que puedan tener el usuario gestor, critico y cliente
 GRANT USAGE ON SCHEMA peliculas TO admin, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
-GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO admin; -- El administrador tiene todos los privilegios para realizar cualquier operación sobre la base de datos
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO admin WITH GRANT OPTION; -- El administrador tiene todos los privilegios para realizar cualquier operación sobre la base de datos
 GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
 GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
@@ -14866,11 +14866,6 @@ BEGIN
         -- Se verifica que la pagina web no está en la tabla de peliculas.pag_web, por tanto tenemos que añadirla
         INSERT INTO peliculas.pag_web(nombre) VALUES (NEW.nombre_pag_web);
     END IF;
-
-    --IF NEW.titulo_peliculas, NEW.anno_peliculas NOT IN (SELECT * FROM peliculas.peliculas) THEN
-        -- Se verifica que el titulo no está presente en peliculas, por tanto daremos el error de que no existe la pelicula en la base de datos
-        --RAISE EXCEPTION 'La pelicula que has introducido no existe en la base de datos';
-    --END IF;
 
     -- Si ha ido todo bien, aceptaremos la consulta
 
