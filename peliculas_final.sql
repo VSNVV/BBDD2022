@@ -14786,6 +14786,15 @@ ALTER TABLE ONLY peliculas.director
 
 -- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
 
+CREATE VIEW peliculas.media_peliculas as
+(SELECT titulo_peliculas, anno_peliculas, avg(puntuacion) as puntuacion_media
+FROM
+peliculas.criticas
+GROUP BY
+titulo_peliculas, anno_peliculas
+ORDER BY
+avg(puntuacion));
+
 CREATE TABLE peliculas.auditoria(
     evento text,
     tabla name,
