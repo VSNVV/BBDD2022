@@ -14873,6 +14873,3 @@ $fn_inserta_critica$ LANGUAGE plpgsql;
 CREATE TRIGGER tg_inserta_critica BEFORE INSERT
     ON peliculas.criticas FOR EACH ROW 
     EXECUTE FUNCTION peliculas.fn_inserta_critica();
-
-
-INSERT INTO peliculas.criticas VALUES ('Jorgito', 5, 'No es una peli de furbo', 2022, 'The House', 'https://www.google.es');
