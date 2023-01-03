@@ -116,21 +116,23 @@ def query_choice() -> int:
 
 def select_query(sql_command: str):
 
+    global connection
+    global cursor
+
     try:
-        global connection
-        global cursor
         cursor.execute(sql_command)
         rows = cursor.fetchall()
         for row in rows:
             print(row)
+        
     except (errors.UndefinedTable) as undefined_table:
-        print(f'La tabla que has introducido no existe -> {undefined_table}')
+        print(f'\n\nLa tabla que has introducido no existe -> {undefined_table}')
     except (errors.UndefinedColumn) as undefined_column:
-        print(f'La columna introducida no existe -> {undefined_column}')
+        print(f'\n\nLa columna introducida no existe -> {undefined_column}')
     except (errors.InsufficientPrivilege) as permission_error:
-        print(f'El usuario elegido {user} no tiene permisos para realizar esta accion -> {permission_error}')
+        print(f'\n\nEl usuario elegido {user} no tiene permisos para realizar esta accion -> {permission_error}')
     except (errors.SyntaxError) as syntax_error:
-        print(f'Error en la sintaxis de la consulta SQL -> {syntax_error}')
+        print(f'\n\nError en la sintaxis de la consulta SQL -> {syntax_error}')
 
 # Función insert_query, ejecuta una consulta para introducir datos
 
@@ -143,17 +145,17 @@ def insert_query(sql_command: str):
         cursor.execute(sql_command)
         connection.commit()
     except (errors.UndefinedTable) as undefined_table:
-        print(f'\nLa tabla que has introducido no existe -> {undefined_table}')
+        print(f'\n\nLa tabla que has introducido no existe -> {undefined_table}')
     except (errors.UndefinedColumn) as undefined_column:
-        print(f'\nLa columna introducida no existe -> {undefined_column}')
+        print(f'\n\nLa columna introducida no existe -> {undefined_column}')
     except (errors.InsufficientPrivilege) as permission_error:
-        print(f'\nEl usuario elegido {user} no tiene permisos para realizar esta accion -> {permission_error}')
+        print(f'\n\nEl usuario elegido {user} no tiene permisos para realizar esta accion -> {permission_error}')
     except (errors.UniqueViolation) as unique_violation:
-        print(f'\nLa consulta viola una restriccion de unicidad (llave ya existente) -> {unique_violation}')
+        print(f'\n\nLa consulta viola una restriccion de unicidad (llave ya existente) -> {unique_violation}')
     except (errors.ForeignKeyViolation) as foreign_key_violation:
-        print(f'\nViolacion de clave foranea (no esta presente en la tabla) -> {foreign_key_violation}')
+        print(f'\n\nViolacion de clave foranea (no esta presente en la tabla) -> {foreign_key_violation}')
     except (errors.SyntaxError) as syntax_error:
-        print(f'Error en la sintaxis de la consulta SQL -> {syntax_error}')
+        print(f'\n\nError en la sintaxis de la consulta SQL -> {syntax_error}')
 
 # Funcion more_querys, pregunta al usuario si quiere hacer mas consultas, y evitar que el programa acabe ejecución
 
@@ -170,8 +172,8 @@ def more_querys() -> bool:
             elif (choice.__eq__('no')):
                 result = False
                 choice_succeded = True
-        except:
-            print('Introduce una opcion valida (si / no)')
+        except ValueError:
+            print('\n\nIntroduce una opcion valida (si / no)')
 
     
     return result
@@ -207,4 +209,4 @@ def main():
 try:
     main()
 except KeyboardInterrupt:
-    print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR TECLADO]=-----------------')
+    print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR TECLADO]=-----------------\n\n')
