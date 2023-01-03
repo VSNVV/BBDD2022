@@ -126,7 +126,7 @@ def more_querys() -> bool:
     choice_succeded = False
     choice = ''
     while (not choice_succeded):
-        choice = str(input('¿Desea hacer mas consultas? (si / no): '))
+        choice = str(input('\n\n¿Desea hacer mas consultas? (si / no): '))
         if (choice.__eq__('si')):
             result = True
             choice_succeded = True
