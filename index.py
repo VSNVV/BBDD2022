@@ -148,10 +148,11 @@ def main():
         # Primero se deberá elegir el usuario, y acto seguido abrir la conexion con la base de datos
         connection_establishment(user_choice())
         # Una vez metidos en la base de datos, elegimos que consulta queremos hacer
-        if (query_choice().__eq__(1)):
+        query_type = query_choice()
+        if (query_type.__eq__(1)):
             sql_command = str(input('Introduce la consulta a realizar (tipo select): '))
             select_query(sql_command)
-        elif (query_choice().__eq__(2)):
+        elif (query_type.__eq__(2)):
             sql_command = str(input('Introduce la consulta a realizar (tipo insert): '))
             insert_query(sql_command)
         # Preguntaremos al usuario si quiere hacer mas consultas
