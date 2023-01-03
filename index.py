@@ -11,7 +11,6 @@ load_dotenv()
 connection = psycopg2.connect(os.getenv('cliente_user'))
 cursor = connection.cursor()
 
-
 # ------------=[FUNCIONES DEFINIDAS]=------------
 
 # Función para elegir usuario
@@ -23,23 +22,37 @@ def user_choice() -> str:
     while (not correct_choice):
         choice = int(input('Elige el usuario con el que deseas conectarte a la base de datos (numero): '))
         if (choice.__eq__(1)):
-            # Se ha elegido el rol de usuario, por tanto se conectará con el rol de usuario de administrador
-            user = 'admin' + '_user'
-            correct_choice = True
+            # Se ha elegido el rol de admin, por tanto se conectará con el rol de usuario de administrador
+            password = str(input('Introduce la contraseña del usuario admin: '))
+            if (password.__eq__(os.getenv('admin_password'))):
+                user = 'admin' + '_user'
+                correct_choice = True
+            else:
+                print('Contraseña incorrecta para el usuario admin')
         elif (choice.__eq__(2)):
             # Se ha elegido el usuario gestor
-            user = 'gestor' + '_user'
-            correct_choice = True
+            password = str(input('Introduce la contrasenna del usuario gestor: '))
+            if (password.__eq__(os.getenv('gestor_password'))):
+                user = 'gestor' + '_user'
+                correct_choice = True
+            else:
+                print('Contraseña incorrecta para el usuario admin')
         elif (choice.__eq__(3)):
             # Se ha elegido el usuario critico
-            user = 'critico' + '_user'
-            correct_choice = True
+            password = str(input('Introduce la contrasenna del usuario critico: '))
+            if (password.__eq__(os.getenv('critico_password'))):
+                user = 'critico' + '_user'
+                correct_choice = True
+            else:
+                print('Contraseña incorrecta para el usuario admin')
         elif (choice.__eq__(4)):
             # Se ha elegido el usuario cliente
-            user = 'cliente' + '_user'
-            correct_choice = True
-        else:
-            print('Introduce un numero del 1 al 4')
+            password = str(input('Introduce la contrasenna del usuario cliente: '))
+            if (password.__eq__(os.getenv('cliente_password'))):
+                user = 'cliente' + '_user'
+                correct_choice = True
+            else:
+                print('Contraseña incorrecta para el usuario admin')
 
     user_info = os.getenv(user)
 
@@ -53,7 +66,7 @@ def connection_establishment(user_info: str):
     connection = psycopg2.connect(user_info)
     cursor = connection.cursor()
 
-# Funcion para terminar la conexion
+# Funcion para terminar / cerrar la conexion
 
 def connection_termination():
 
