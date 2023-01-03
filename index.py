@@ -16,10 +16,10 @@ cursor = connection.cursor()
 # Función para elegir usuario
 def user_choice() -> str:
 
-    print('\t\t-----------------=[ELECCION DE USUARIO]=-----------------\n\n\t1. Admin\n\t2. Gestor\n\t3. Critico\n\t4. Cliente\n\n\t\t-----------------=[ELECCION DE USUARIO]=-----------------\n\n')
     correct_choice = False
 
     while (not correct_choice):
+        print('\t\t-----------------=[ELECCION DE USUARIO]=-----------------\n\n\t1. Admin\n\t2. Gestor\n\t3. Critico\n\t4. Cliente\n\n\t\t-----------------=[ELECCION DE USUARIO]=-----------------\n\n')
         choice = int(input('Elige el usuario con el que deseas conectarte a la base de datos (numero): '))
         if (choice.__eq__(1)):
             # Se ha elegido el rol de admin, por tanto se conectará con el rol de usuario de administrador
