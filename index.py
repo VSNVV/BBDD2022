@@ -63,9 +63,25 @@ def connection_termination():
     connection.close()
     print('Conexion cerrada.')
 
-# Función executer, cada vez que se quiere enviar una consulta al servidor se deberá llamar a esta función
+# Funcion query_choice, elige le tipo de query que se va a ejecutar
 
-def execute(sql_command: str):
+def query_choice() -> int:
+    possible_results = [1, 2]
+    print('\t\t-----------------=[ELECCION DE TIPO DE CONSULTA]=-----------------\n\n\t1. Consulta de tipo select\n\t2. Consulta de tipo insert\n\n')
+    correct_result = False
+    while (not correct_result):
+        result = int(input('Elige la opción deseada (introduciendo el numero de la opcion): '))
+        if (result in possible_results):
+            correct_result = True
+        else:
+            print('Introduce una opcion correcta')
+    return result
+    
+
+
+# Función select_query, ejecuta una consulta con SELECT (consulta que muestra datos)
+
+def select_query(sql_command: str):
     global connection
     global cursor
     cursor.execute(sql_command)
@@ -73,33 +89,57 @@ def execute(sql_command: str):
     for row in rows:
         print(row)
 
+# Función insert_query, ejecuta una consulta para introducir datos
+
+def insert_query(sql_command: str):
+    global connection
+    global cursor
+    cursor.execute(sql_command)
+    connection.commit()
+
+# Funcion more_querys, pregunta al usuario si quiere hacer mas consultas, y evitar que el programa acabe ejecución
+
+def more_querys() -> bool:
+    result: bool
+    choice_succeded = False
+    choice = ''
+    while (not choice_succeded):
+        choice = str(input('¿Desea hacer mas consultas? (si / no): '))
+        if (choice.__eq__('si')):
+            result = True
+            choice_succeded = True
+        elif (choice.__eq__('no')):
+            result = False
+            choice_succeded = True
+        else:
+            print('Introduce una opcion valida (si / no)')
+    
+    return result
+
+# Función main, representa el hilo principal o main del programa
+
+def main():
+    os.system('cls')
+    running = True
+
+    while (running):
+        # Primero se deberá elegir el usuario, y acto seguido abrir la conexion con la base de datos
+        connection_establishment(user_choice())
+        # Una vez metidos en la base de datos, elegimos que consulta queremos hacer
+        if (query_choice().__eq__(1)):
+            sql_command = str(input('Introduce la consulta a realizar (tipo select): '))
+            select_query(sql_command)
+        elif (query_choice().__eq__(2)):
+            sql_command = str(input('Introduce la consulta a realizar (tipo insert): '))
+            insert_query(sql_command)
+        # Preguntaremos al usuario si quiere hacer mas consultas
+        if more_querys().__eq__(False):
+            print('Cerrando...')
+            connection_termination()
+            time.sleep(0.5)
+            print('\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------')
+            running = False
+
 # ------------=[PROGRAMA PRINCIPAL]=------------
 
-# Primero debemos preguntar por qué usuario se va a realizar la consulta
-
-os.system('cls')
-running = True
-
-while (running):
-    # Primero se deberá elegir el usuario, y acto seguido abrir la conexion con la base de datos
-    connection_establishment(user_choice())
-    # Escribimos la consulta a ejecutar:
-    sql_command = str(input('Introduce la consulta a realizar: '))
-    # Una vez escrita la consulta, la ejecutamos
-    execute('SELECT * FROM peliculas.criticas')
-    more_commands = str(input('\n\n¿Desea hacer mas consultas? (si / no): '))
-    succeded = False
-    while (not succeded):
-        if (more_commands.__eq__('no')):
-            connection_termination # Se termina la conexion
-            running = False # El programa acaba ejecucion
-            succeded = True
-        elif (more_commands.__eq__('si')):
-            succeded = True
-            os.system('cls')
-        else:
-            print('Escriba una opcion valida (si / no): ')
-
-print('Cerrando...')
-time.sleep(0.5)
-print('\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------')
+main()
