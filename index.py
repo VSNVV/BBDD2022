@@ -29,6 +29,7 @@ def user_choice() -> str:
                 correct_choice = True
             else:
                 print('Contraseña incorrecta para el usuario admin')
+                time.sleep(2)
         elif (choice.__eq__(2)):
             # Se ha elegido el usuario gestor
             password = str(input('Introduce la contrasenna del usuario gestor: '))
@@ -36,7 +37,8 @@ def user_choice() -> str:
                 user = 'gestor' + '_user'
                 correct_choice = True
             else:
-                print('Contraseña incorrecta para el usuario admin')
+                print('Contraseña incorrecta para el usuario gestor')
+                time.sleep(2)
         elif (choice.__eq__(3)):
             # Se ha elegido el usuario critico
             password = str(input('Introduce la contrasenna del usuario critico: '))
@@ -44,7 +46,8 @@ def user_choice() -> str:
                 user = 'critico' + '_user'
                 correct_choice = True
             else:
-                print('Contraseña incorrecta para el usuario admin')
+                print('Contraseña incorrecta para el usuario critico')
+                time.sleep(2)
         elif (choice.__eq__(4)):
             # Se ha elegido el usuario cliente
             password = str(input('Introduce la contrasenna del usuario cliente: '))
@@ -52,8 +55,14 @@ def user_choice() -> str:
                 user = 'cliente' + '_user'
                 correct_choice = True
             else:
-                print('Contraseña incorrecta para el usuario admin')
-
+                print('Contraseña incorrecta para el usuario cliente')
+                time.sleep(2)
+        else:
+            print('Introduce una opcion correcta (numero del 1 al 4)')
+        os.system('cls')
+    
+    print('Contrasena correcta!')
+    time.sleep(2)
     user_info = os.getenv(user)
 
     return user_info
