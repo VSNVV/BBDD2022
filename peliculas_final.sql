@@ -14786,14 +14786,12 @@ ALTER TABLE ONLY peliculas.director
 
 -- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
 
-CREATE VIEW peliculas.media_peliculas as
-(SELECT titulo_peliculas, anno_peliculas, avg(puntuacion) as puntuacion_media
-FROM
-peliculas.criticas
-GROUP BY
-titulo_peliculas, anno_peliculas
-ORDER BY
-avg(puntuacion));
+CREATE USER admin PASSWORD 'admin'; -- Creamos el rol de administrador
+CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
+CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
+CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
+
+-- Creamos la tabla para almacenar las medias de todas las películas
 
 CREATE TABLE peliculas.nota_media_peliculas(
     titulo_peliculas text,
@@ -14801,12 +14799,11 @@ CREATE TABLE peliculas.nota_media_peliculas(
     media integer
 );
 
-INSERT INTO peliculas.nota_media_peliculas(titulo_peliculas, anno_peliculas, media)
-SELECT titulo_peliculas, anno_peliculas, puntuacion_media FROM peliculas.media_peliculas;
-
-CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
-CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
-
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos predeterminados que puedan tener el usuario gestor, critico y cliente 
+GRANT USAGE ON SCHEMA peliculas TO admin, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
+GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
+GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
+GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo puede consultar el contenido de las tablas
 
 CREATE TABLE peliculas.auditoria(
     evento text,
@@ -14815,20 +14812,11 @@ CREATE TABLE peliculas.auditoria(
     fecha timestamp
 );
 
--- Despues, creamos los usuarios
-
-CREATE USER admin PASSWORD 'admin'; -- Creamos el rol de administrador
-CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
-
 -- Una vez creados todos los usuarios, les damos permisos a cada uno de ellos
 
-REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos que puedan tener el usuario gestor, critico y cliente
-GRANT USAGE ON SCHEMA peliculas TO admin, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO admin WITH GRANT OPTION; -- El administrador tiene todos los privilegios para realizar cualquier operación sobre la base de datos
 GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
-GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
-GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
-GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo puede consultar el contenido de las tablas
+
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
@@ -14892,11 +14880,16 @@ END;
 
 $fn_inserta_critica$ LANGUAGE plpgsql;
 
+-- Creamos el trigger de insertar criticas
+
 CREATE TRIGGER tg_inserta_critica
+
     BEFORE INSERT
     ON peliculas.criticas
     FOR EACH ROW
     EXECUTE FUNCTION peliculas.fn_inserta_critica();
+
+-- Funcion que ejecuta el trigger de insertar criticas
 
 CREATE OR REPLACE FUNCTION peliculas.fn_actualiza_media_peliculas() RETURNS TRIGGER SECURITY DEFINER AS $fn_actualiza_media_peliculas$
 
@@ -14907,14 +14900,34 @@ BEGIN
     FROM peliculas.media_peliculas
     WHERE (peliculas.media_peliculas.titulo_peliculas = NEW.titulo_peliculas) and (peliculas.media_peliculas.anno_peliculas = NEW.anno_peliculas));
 
+    -- Solo se cambia la nota media a la pelicula que se le ha insertado la critica, ya que las demás seguirán intactas y no tiene sentido cambiarlas
+
     RETURN NEW;
 
 END;
 
 $fn_actualiza_media_peliculas$ LANGUAGE plpgsql;
 
+-- Creamos el trigger de actuializar la nota media de las peliculas
+
 CREATE TRIGGER tg_actualiza_medias_peliculas
     AFTER INSERT
     ON peliculas.criticas
     FOR EACH ROW
     EXECUTE FUNCTION peliculas.fn_actualiza_media_peliculas();
+
+-- Vista auxiliar de las medias de todas las películas
+
+CREATE VIEW peliculas.media_peliculas as
+(SELECT titulo_peliculas, anno_peliculas, avg(puntuacion) as puntuacion_media
+FROM
+peliculas.criticas
+GROUP BY
+titulo_peliculas, anno_peliculas
+ORDER BY
+avg(puntuacion));
+
+-- Poblamos la tabla de notas medias de peliculas con la vista auxiliar que hemos creado anteriormente
+
+INSERT INTO peliculas.nota_media_peliculas(titulo_peliculas, anno_peliculas, media)
+SELECT titulo_peliculas, anno_peliculas, puntuacion_media FROM peliculas.media_peliculas;
