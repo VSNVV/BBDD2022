@@ -7,12 +7,6 @@ import os
 import time
 load_dotenv()
 
-# ------------=[VARIABLES GLOBALES]=------------
-
-#connection = psycopg2.connect(os.getenv('cliente_user'))
-#cursor = connection.cursor()
-#user = ''
-
 # ------------=[FUNCIONES DEFINIDAS]=------------
 
 # Función para elegir usuario
