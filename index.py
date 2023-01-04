@@ -21,39 +21,39 @@ def user_choice() -> str:
             choice = int(input('Elige el usuario con el que deseas conectarte a la base de datos (numero): '))
             if (choice.__eq__(1)):
                 # Se ha elegido el rol de admin, por tanto se conectará con el rol de usuario de administrador
-                password = str(input('Introduce la contraseña del usuario admin: '))
+                password = str(input('Introduce la contrasena del usuario admin: '))
                 if (password.__eq__(os.getenv('admin_password'))):
                     user = 'admin'
                     correct_choice = True
                 else:
-                    print('Contraseña incorrecta para el usuario admin')
+                    print('Contrasena incorrecta para el usuario admin')
                     time.sleep(2)
             elif (choice.__eq__(2)):
                 # Se ha elegido el usuario gestor
-                password = str(input('Introduce la contrasenna del usuario gestor: '))
+                password = str(input('Introduce la contrasena del usuario gestor: '))
                 if (password.__eq__(os.getenv('gestor_password'))):
                     user = 'gestor'
                     correct_choice = True
                 else:
-                    print('Contraseña incorrecta para el usuario gestor')
+                    print('Contrasena incorrecta para el usuario gestor')
                     time.sleep(2)
             elif (choice.__eq__(3)):
                 # Se ha elegido el usuario critico
-                password = str(input('Introduce la contrasenna del usuario critico: '))
+                password = str(input('Introduce la contrasena del usuario critico: '))
                 if (password.__eq__(os.getenv('critico_password'))):
                     user = 'critico'
                     correct_choice = True
                 else:
-                    print('Contraseña incorrecta para el usuario critico')
+                    print('Contrasena incorrecta para el usuario critico')
                     time.sleep(2)
             elif (choice.__eq__(4)):
                 # Se ha elegido el usuario cliente
-                password = str(input('Introduce la contrasenna del usuario cliente: '))
+                password = str(input('Introduce la contrasena del usuario cliente: '))
                 if (password.__eq__(os.getenv('cliente_password'))):
                     user = 'cliente'
                     correct_choice = True
                 else:
-                    print('Contraseña incorrecta para el usuario cliente')
+                    print('Contrasena incorrecta para el usuario cliente')
                     time.sleep(2)
             else:
                 print('Introduce una opcion correcta (numero del 1 al 4)')
