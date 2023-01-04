@@ -14820,15 +14820,46 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO admin WITH GRANT OPTIO
 GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
 
 
+-- Funcion auxiliar
+
+CREATE OR REPLACE FUNCTION peliculas.da_permiso_critico()
+RETURNS void
+SECURITY DEFINER
+AS
+$BODY$
+BEGIN
+GRANT INSERT ON peliculas.auditoria TO critico;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+-- Funcion auxiliar
+
+CREATE OR REPLACE FUNCTION peliculas.quita_permiso_critico()
+RETURNS void
+SECURITY DEFINER
+AS
+$BODY$
+BEGIN
+REVOKE INSERT ON peliculas.auditoria FROM critico;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
-CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER SECURITY DEFINER AS $fn_auditoria$
+CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
 BEGIN
+
+    PERFORM peliculas.da_permiso_critico();
 
     IF TG_OP = 'INSERT' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_RELNAME, current_user, now());
     ELSIF TG_OP = 'UPDATE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('UPDATE', TG_RELNAME, current_user, now());
     ELSIF TG_OP = 'DELETE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('DELETE', TG_RELNAME, current_user, now());
     END IF;
+
+    PERFORM peliculas.quita_permiso_critico();
+    
     RETURN NEW;
 
 END;
@@ -14841,7 +14872,7 @@ CREATE TRIGGER tg_auditoria
     AFTER INSERT OR UPDATE OR DELETE
     ON peliculas.criticas
     FOR EACH ROW
-    EXECUTE FUNCTION peliculas.fn_auditoria();
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
 
 -- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
 
