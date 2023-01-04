@@ -14821,13 +14821,15 @@ GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo pu
 
 -- Una vez creada la tabla de auditoria, podemos crear en trigger de esta misma tabla
 
-CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
+CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER SECURITY DEFINER AS $fn_auditoria$
 BEGIN
+
     IF TG_OP = 'INSERT' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_RELNAME, current_user, now());
     ELSIF TG_OP = 'UPDATE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('UPDATE', TG_RELNAME, current_user, now());
     ELSIF TG_OP = 'DELETE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('DELETE', TG_RELNAME, current_user, now());
     END IF;
     RETURN NEW;
+
 END
 $fn_auditoria$ LANGUAGE plpgsql;
 
@@ -14837,10 +14839,10 @@ CREATE TRIGGER tg_auditoria AFTER INSERT OR UPDATE OR DELETE ON peliculas.critic
 
 -- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
 
-CREATE OR REPLACE FUNCTION peliculas.fn_inserta_critica() RETURNS TRIGGER AS $fn_inserta_critica$
-DECLARE
+CREATE OR REPLACE FUNCTION peliculas.fn_inserta_critica() RETURNS TRIGGER SECURITY DEFINER AS $fn_inserta_critica$
 
 BEGIN
+
     -- Nos fijamos en los campos de la tabla peliculas.criticas que tienen NOT NULL, y los tendremos que poner como condición d a tener antes de insertar la crítica
     -- Primero deberemos comprobar que el usuario da una pagina web en al consulta, si no se le dará error
     IF NEW.critico ISNULL THEN
@@ -14870,10 +14872,13 @@ BEGIN
     -- Si ha ido todo bien, aceptaremos la consulta
 
     RETURN NEW;
+
 END;
 
 $fn_inserta_critica$ LANGUAGE plpgsql;
 
-CREATE TRIGGER tg_inserta_critica BEFORE INSERT
-    ON peliculas.criticas FOR EACH ROW 
+CREATE TRIGGER tg_inserta_critica
+    BEFORE INSERT
+    ON peliculas.criticas
+    FOR EACH ROW
     EXECUTE FUNCTION peliculas.fn_inserta_critica();
