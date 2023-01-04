@@ -14795,6 +14795,12 @@ titulo_peliculas, anno_peliculas
 ORDER BY
 avg(puntuacion));
 
+CREATE TABLE peliculas.nota_media_peliculas(
+    titulo_peliculas text,
+    anno_peliculas smallint,
+    media integer
+);
+
 CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
 CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 
