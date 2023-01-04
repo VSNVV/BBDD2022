@@ -9,9 +9,9 @@ load_dotenv()
 
 # ------------=[VARIABLES GLOBALES]=------------
 
-connection = psycopg2.connect(os.getenv('cliente_user'))
-cursor = connection.cursor()
-user = ''
+#connection = psycopg2.connect(os.getenv('cliente_user'))
+#cursor = connection.cursor()
+#user = ''
 
 # ------------=[FUNCIONES DEFINIDAS]=------------
 
@@ -69,7 +69,7 @@ def user_choice() -> str:
 
         os.system('cls')
     
-    print('Contrasena correcta!')
+    print('Contrasena correcta!, estableciendo conexion...')
     time.sleep(2)
     user_info = os.getenv(user + '_user')
 
@@ -83,6 +83,7 @@ def connection_establishment(user_info: str):
     global cursor
     connection = psycopg2.connect(user_info)
     cursor = connection.cursor()
+    print('\nConexion establecida correctamente')
 
 # Funcion para terminar / cerrar la conexion
 
@@ -122,9 +123,11 @@ def select_query(sql_command: str):
     try:
         cursor.execute(sql_command)
         rows = cursor.fetchall()
+        print('\n\nConsulta realizada correctamente, mostrando resultados...\n\n')
+        time.sleep(1)
         for row in rows:
             print(row)
-        
+  
     except (errors.UndefinedTable) as undefined_table:
         print(f'\n\nLa tabla que has introducido no existe -> {undefined_table}')
     except (errors.UndefinedColumn) as undefined_column:
@@ -144,6 +147,7 @@ def insert_query(sql_command: str):
     try:
         cursor.execute(sql_command)
         connection.commit()
+        print('\nConsulta realizada correctamente!')
     except (errors.UndefinedTable) as undefined_table:
         print(f'\n\nLa tabla que has introducido no existe -> {undefined_table}')
     except (errors.UndefinedColumn) as undefined_column:
@@ -189,7 +193,13 @@ def main():
 
         while (running):
             # Primero se deberá elegir el usuario, y acto seguido abrir la conexion con la base de datos
-            connection_establishment(user_choice())
+            try:
+                connection_establishment(user_choice())
+            except (psycopg2.OperationalError):
+                print('Error en la conexion a la base de datos')
+                running = False
+                print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR FALLO DE CONEXION]=-----------------\n\n')
+                break
             # Una vez metidos en la base de datos, elegimos que consulta queremos hacer
             query_type = query_choice()
             if (query_type.__eq__(1)):
@@ -203,7 +213,7 @@ def main():
                 print('Cerrando...')
                 connection_termination()
                 time.sleep(0.5)
-                print('\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------')
+                print('\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------\n\n')
                 running = False
     except KeyboardInterrupt:
         print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR TECLADO]=-----------------\n\n')
