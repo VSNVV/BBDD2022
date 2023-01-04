@@ -14795,6 +14795,10 @@ titulo_peliculas, anno_peliculas
 ORDER BY
 avg(puntuacion));
 
+CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
+CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
+
+
 CREATE TABLE peliculas.auditoria(
     evento text,
     tabla name,
@@ -14806,8 +14810,6 @@ CREATE TABLE peliculas.auditoria(
 
 CREATE USER admin PASSWORD 'admin'; -- Creamos el rol de administrador
 CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
-CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
-CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 
 -- Una vez creados todos los usuarios, les damos permisos a cada uno de ellos
 
@@ -14830,12 +14832,16 @@ BEGIN
     END IF;
     RETURN NEW;
 
-END
+END;
 $fn_auditoria$ LANGUAGE plpgsql;
 
 -- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla 
 
-CREATE TRIGGER tg_auditoria AFTER INSERT OR UPDATE OR DELETE ON peliculas.criticas FOR EACH ROW EXECUTE FUNCTION peliculas.fn_auditoria();
+CREATE TRIGGER tg_auditoria
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.criticas
+    FOR EACH ROW
+    EXECUTE FUNCTION peliculas.fn_auditoria();
 
 -- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
 
