@@ -14859,14 +14859,13 @@ BEGIN
     END IF;
 
     PERFORM peliculas.quita_permiso_critico();
-    
+
     RETURN NEW;
 
 END;
 $fn_auditoria$ LANGUAGE plpgsql;
 
--- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla 
-
+-- Se crea el trigger de auditoria
 CREATE TRIGGER tg_auditoria
 
     AFTER INSERT OR UPDATE OR DELETE
