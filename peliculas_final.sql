@@ -14782,9 +14782,9 @@ ALTER TABLE ONLY peliculas.director
 -- PostgreSQL database dump complete
 --
 
----------------=[SECCION EDITADA POR NOSOTROS]=---------------
+---------------=[SECCIÓN EDITADA POR NOSOTROS]=---------------
 
--- En primer lugar tenemos que crear la tabla de auditoria, que guardará los eventos que tienen lugar en la base de datos
+-- En primer lugar tenemos que crear la tabla de auditoría, que guardará los eventos que tienen lugar en la base de datos
 
 CREATE USER admin PASSWORD 'admin'; -- Creamos el rol de administrador
 CREATE USER gestor PASSWORD 'gestor'; -- Creamos el rol de gestor
@@ -14794,18 +14794,20 @@ CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 -- Creamos la tabla para almacenar las medias de todas las películas
 
 CREATE TABLE peliculas.nota_media_peliculas(
+
     titulo_peliculas text,
     anno_peliculas smallint,
     media integer
 );
 
-REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos predeterminados que puedan tener el usuario gestor, critico y cliente 
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas FROM gestor, critico, cliente; -- Le quitamos todos los permisos predeterminados que puedan tener el usuario gestor, crítico y cliente 
 GRANT USAGE ON SCHEMA peliculas TO admin, gestor, critico, cliente; -- Damos acceso a todos los roles al esquema peliculas, ya que es el que vamos a utilizar
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO critico; -- Un critico puede consultar cualquier tabla de la base de datos
-GRANT INSERT ON peliculas.criticas TO critico; -- Un critico solo puede insertar elementos en la tabla de críticas
+GRANT INSERT ON peliculas.criticas TO critico; -- Un crítico solo puede insertar elementos en la tabla de críticas
 GRANT SELECT ON ALL TABLES IN SCHEMA peliculas TO cliente; -- Un cliente solo puede consultar el contenido de las tablas
 
 CREATE TABLE peliculas.auditoria(
+
     evento text,
     tabla name,
     usuario text,
@@ -14835,6 +14837,7 @@ $fn_auditoria$ LANGUAGE plpgsql;
 -- Se crea el trigger que se dispara cuando hay una inserción, modificación o borrado en la tabla 
 
 CREATE TRIGGER tg_auditoria
+
     AFTER INSERT OR UPDATE OR DELETE
     ON peliculas.criticas
     FOR EACH ROW
@@ -14871,8 +14874,6 @@ BEGIN
         -- Se verifica que la pagina web no está en la tabla de peliculas.pag_web, por tanto tenemos que añadirla
         INSERT INTO peliculas.pag_web(nombre) VALUES (NEW.nombre_pag_web);
     END IF;
-
-    -- Si ha ido todo bien, aceptaremos la consulta
 
     RETURN NEW;
 
