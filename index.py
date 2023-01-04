@@ -209,7 +209,7 @@ def main():
                 print('Cerrando...')
                 connection_termination()
                 time.sleep(0.5)
-                print('\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------\n\n')
+                print('\n\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------\n\n')
                 running = False
     except KeyboardInterrupt:
         print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR TECLADO]=-----------------\n\n')
