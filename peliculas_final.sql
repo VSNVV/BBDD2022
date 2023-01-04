@@ -14905,7 +14905,7 @@ BEGIN
     UPDATE peliculas.nota_media_peliculas SET (media) =
     (SELECT puntuacion_media
     FROM peliculas.media_peliculas
-    WHERE (peliculas.media_peliculas.titulo_peliculas = 'The House') and (peliculas.media_peliculas.anno_peliculas = 2022));
+    WHERE (peliculas.media_peliculas.titulo_peliculas = NEW.titulo_peliculas) and (peliculas.media_peliculas.anno_peliculas = NEW.anno_peliculas));
 
     RETURN NEW;
 
