@@ -77,7 +77,8 @@ def connection_establishment(user_info: str):
     global cursor
     connection = psycopg2.connect(user_info)
     cursor = connection.cursor()
-    print('\nConexion establecida correctamente')
+    print('\nConexion establecida correctamente!\n')
+    time.sleep(1)
 
 # Funcion para terminar / cerrar la conexion
 
@@ -97,11 +98,12 @@ def query_choice() -> int:
     print('\t\t-----------------=[ELECCION DE TIPO DE CONSULTA]=-----------------\n\n\t1. Consulta de tipo select\n\t2. Consulta de tipo insert\n\n')
     correct_result = False
     while (not correct_result):
-        result = int(input('Elige la opción deseada (introduciendo el numero de la opcion): '))
-        if (result in possible_results):
-            correct_result = True
-        else:
-            print('Introduce una opcion correcta')
+        try:
+            result = int(input('Elige la opción deseada (introduciendo el numero de la opcion): '))
+            if (result in possible_results):
+                correct_result = True
+        except ValueError:
+            print(f'Introduce un valor valido ({possible_results})')
 
     return result
     
