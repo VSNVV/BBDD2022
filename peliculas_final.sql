@@ -14801,6 +14801,9 @@ CREATE TABLE peliculas.nota_media_peliculas(
     media integer
 );
 
+INSERT INTO peliculas.nota_media_peliculas(titulo_peliculas, anno_peliculas, media)
+SELECT titulo_peliculas, anno_peliculas, puntuacion_media FROM peliculas.media_peliculas;
+
 CREATE USER critico PASSWORD 'critico'; -- Creamos el rol de critico
 CREATE USER cliente PASSWORD 'cliente'; -- Creamos le rol de cliente
 
@@ -14894,3 +14897,24 @@ CREATE TRIGGER tg_inserta_critica
     ON peliculas.criticas
     FOR EACH ROW
     EXECUTE FUNCTION peliculas.fn_inserta_critica();
+
+CREATE OR REPLACE FUNCTION peliculas.fn_actualiza_media_peliculas() RETURNS TRIGGER SECURITY DEFINER AS $fn_actualiza_media_peliculas$
+
+BEGIN
+
+    UPDATE peliculas.nota_media_peliculas SET (media) =
+    (SELECT puntuacion_media
+    FROM peliculas.media_peliculas
+    WHERE
+    (peliculas.nota_media_peliculas.titulo_peliculas = NEW.titulo_peliculas) and
+    (peliculas.nota_media_peliculas.anno_peliculas = NEW.anno_peliculas));
+
+END;
+
+$fn_actualiza_media_peliculas$ LANGUAGE plpgsql;
+
+CREATE TRIGGER tg_actualiza_medias_peliculas
+    AFTER INSERT
+    ON peliculas.criticas
+    FOR EACH ROW
+    EXECUTE FUNCTION peliculas.fn_actualiza_media_peliculas();
