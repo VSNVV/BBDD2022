@@ -14871,13 +14871,18 @@ BEGIN
 END;
 $fn_auditoria$ LANGUAGE plpgsql;
 
--- Se crea el trigger de auditoria
+-- CREAMOS TRIGGERS DE AUDITORÍA PARA TODAS LAS TABLAS, porque no adminte poner ALL TABLES.
+
+-- Trigger de auditoría para la tabla peliculas.criticas:
+
 CREATE TRIGGER tg_auditoria
 
     AFTER INSERT OR UPDATE OR DELETE
     ON peliculas.criticas
     FOR EACH ROW
     EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Creamos el trigger de auditoria de las demás tablas
 
 -- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
 
@@ -14887,6 +14892,7 @@ BEGIN
 
     -- Nos fijamos en los campos de la tabla peliculas.criticas que tienen NOT NULL, y los tendremos que poner como condición d a tener antes de insertar la crítica
     -- Primero deberemos comprobar que el usuario da una pagina web en al consulta, si no se le dará error
+
     IF NEW.critico ISNULL THEN
         RAISE EXCEPTION 'El nombre del critico no puede ser nulo, debes imprimir uno';
     END IF;
