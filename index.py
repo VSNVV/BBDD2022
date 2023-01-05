@@ -95,7 +95,7 @@ def connection_termination():
 def query_choice() -> int:
 
     possible_results = [1, 2]
-    print('\t\t-----------------=[ELECCION DE TIPO DE CONSULTA]=-----------------\n\n\t1. Consulta de tipo select\n\t2. Consulta de tipo insert\n\n')
+    print('\t\t-----------------=[ELECCION DE TIPO DE CONSULTA]=-----------------\n\n\t1. Consulta de tipo select\n\t2. Consulta de tipo insert, delete o update\n\n')
     correct_result = False
     while (not correct_result):
         try:
@@ -129,11 +129,11 @@ def select_query(sql_command: str):
     except (errors.UndefinedColumn) as undefined_column:
         print(f'\n\nLa columna introducida no existe -> {undefined_column}')
     except (errors.InsufficientPrivilege) as permission_error:
-        print(f'\n\nEl usuario elegido {user} no tiene permisos para realizar esta accion -> {permission_error}')
+        print(f'\n\nEl usuario elegido ({user}) no tiene permisos para realizar esta accion -> {permission_error}')
     except (errors.SyntaxError) as syntax_error:
         print(f'\n\nError en la sintaxis de la consulta SQL -> {syntax_error}')
 
-# Función insert_query, ejecuta una consulta para introducir datos
+# Función insert_query, ejecuta una consulta para introducir, borrar o actualizar datos
 
 def insert_query(sql_command: str):
     
@@ -149,7 +149,7 @@ def insert_query(sql_command: str):
     except (errors.UndefinedColumn) as undefined_column:
         print(f'\n\nLa columna introducida no existe -> {undefined_column}')
     except (errors.InsufficientPrivilege) as permission_error:
-        print(f'\n\nEl usuario elegido {user} no tiene permisos para realizar esta accion -> {permission_error}')
+        print(f'\n\nEl usuario elegido ({user}) no tiene permisos para realizar esta accion -> {permission_error}')
     except (errors.UniqueViolation) as unique_violation:
         print(f'\n\nLa consulta viola una restriccion de unicidad (llave ya existente) -> {unique_violation}')
     except (errors.ForeignKeyViolation) as foreign_key_violation:
