@@ -14820,7 +14820,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA peliculas TO admin WITH GRANT OPTIO
 GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor; -- El usuario gestor tiene acceso a insertar, actualizar, borrar y realizar consultas sobre la base de datos
 
 
--- Funcion auxiliar
+-- Funcion auxiliar para dar permisos a critico para insertar en auditoria
 
 CREATE OR REPLACE FUNCTION peliculas.da_permiso_critico()
 RETURNS void
@@ -14853,9 +14853,15 @@ BEGIN
 
     PERFORM peliculas.da_permiso_critico();
 
-    IF TG_OP = 'INSERT' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_RELNAME, current_user, now());
-    ELSIF TG_OP = 'UPDATE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('UPDATE', TG_RELNAME, current_user, now());
-    ELSIF TG_OP = 'DELETE' THEN INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('DELETE', TG_RELNAME, current_user, now());
+    IF TG_OP = 'INSERT' THEN
+        INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_TABLE_NAME, current_user, current_timestamp);
+
+    ELSIF TG_OP = 'UPDATE' THEN
+        INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('UPDATE', TG_TABLE_NAME, current_user, current_timestamp);
+
+    ELSIF TG_OP = 'DELETE' THEN
+        INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('DELETE', TG_TABLE_NAME, current_user, current_timestamp);
+
     END IF;
 
     PERFORM peliculas.quita_permiso_critico();
