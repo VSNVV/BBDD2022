@@ -14851,7 +14851,10 @@ LANGUAGE plpgsql;
 CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER AS $fn_auditoria$
 BEGIN
 
-    PERFORM peliculas.da_permiso_critico();
+    IF current_user = 'critico' THEN
+        PERFORM peliculas.da_permiso_critico();
+
+    END IF;
 
     IF TG_OP = 'INSERT' THEN
         INSERT INTO peliculas.auditoria(evento, tabla, usuario, fecha) VALUES ('INSERT', TG_TABLE_NAME, current_user, current_timestamp);
@@ -14864,7 +14867,10 @@ BEGIN
 
     END IF;
 
-    PERFORM peliculas.quita_permiso_critico();
+    IF current_user = 'critico' THEN
+        PERFORM peliculas.quita_permiso_critico();
+
+    END IF;
 
     RETURN NEW;
 
@@ -14875,14 +14881,85 @@ $fn_auditoria$ LANGUAGE plpgsql;
 
 -- Trigger de auditoría para la tabla peliculas.criticas:
 
-CREATE TRIGGER tg_auditoria
+CREATE TRIGGER tg_criticas_audit
 
     AFTER INSERT OR UPDATE OR DELETE
     ON peliculas.criticas
     FOR EACH ROW
     EXECUTE PROCEDURE peliculas.fn_auditoria();
 
--- Creamos el trigger de auditoria de las demás tablas
+-- Trigger de auditoría para la tabla peliculas.personal:
+
+CREATE TRIGGER tg_personal_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.personal
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Trigger de auditoria para la tabla peliculas.actor:
+
+CREATE TRIGGER tg_actor_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.actor
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Trigger de auditoria para la tabla de peliculas.director:
+
+CREATE TRIGGER tg_director_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.director
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+
+-- Trigger de auditoria para la tabla de peliculas.actua
+
+CREATE TRIGGER tg_actua_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.actua
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Trigger de auditoria para la tabla de peliculas.peliculas
+
+CREATE TRIGGER tg_peliculas_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.peliculas
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Trigger de auditoria para la tabla peliculas.generos
+
+CREATE TRIGGER tg_generos_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.generos
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Trigger de auditoria para la tabla peliclas.caratulas:
+
+CREATE TRIGGER tg_caratulas_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.caratulas
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
+
+-- Trigger de auditoria para la tabla peliculas.pag_web:
+
+CREATE TRIGGER tg_paginaweb_audit
+
+    AFTER INSERT OR UPDATE OR DELETE
+    ON peliculas.pag_web
+    FOR EACH ROW
+    EXECUTE PROCEDURE peliculas.fn_auditoria();
 
 -- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
 
