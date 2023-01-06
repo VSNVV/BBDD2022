@@ -133,7 +133,7 @@ def select_query(sql_command: str):
     except (errors.SyntaxError) as syntax_error:
         print(f'\n\nError en la sintaxis de la consulta SQL -> {syntax_error}')
     except (errors.ProgrammingError) as programming_error:
-        print(f'\n\nError de programacion, has hecho un insert en un query select? -> {programming_error}')
+        print(f'\n\nError de programacion, ¿has hecho un insert en un query select? -> {programming_error}')
 
 # Función insert_query, ejecuta una consulta para introducir, borrar o actualizar datos
 
