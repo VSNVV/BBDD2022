@@ -86,28 +86,10 @@ def connection_termination():
 
     global connection
     global cursor
+
     cursor.close()
     connection.close()
     print('Conexion cerrada.')
-
-# Funcion query_choice, elige le tipo de query que se va a ejecutar
-
-def query_choice() -> int:
-
-    possible_results = [1, 2]
-    print('\t\t-----------------=[ELECCION DE TIPO DE CONSULTA]=-----------------\n\n\t1. Consulta de tipo select\n\t2. Consulta de tipo insert, delete o update\n\n')
-    correct_result = False
-    while (not correct_result):
-        try:
-            result = int(input('Elige la opción deseada (introduciendo el numero de la opcion): '))
-            if (result in possible_results):
-                correct_result = True
-        except ValueError:
-            print(f'Introduce un valor valido ({possible_results})')
-
-    return result
-    
-
 
 # Función select_query, ejecuta una consulta con SELECT (consulta que muestra datos)
 
@@ -132,8 +114,6 @@ def select_query(sql_command: str):
         print(f'\n\nEl usuario elegido ({user}) no tiene permisos para realizar esta accion -> {permission_error}')
     except (errors.SyntaxError) as syntax_error:
         print(f'\n\nError en la sintaxis de la consulta SQL -> {syntax_error}')
-    except (errors.ProgrammingError) as programming_error:
-        print(f'\n\nError de programacion, ¿has hecho un insert en un query select? -> {programming_error}')
 
 # Función insert_query, ejecuta una consulta para introducir, borrar o actualizar datos
 
@@ -161,13 +141,13 @@ def insert_query(sql_command: str):
 
 # Funcion more_querys, pregunta al usuario si quiere hacer mas consultas, y evitar que el programa acabe ejecución
 
-def more_querys() -> bool:
+def yes_or_no_choice() -> bool:
     result: bool
     choice_succeded = False
     choice = ''
     while (not choice_succeded):
         try:
-            choice = str(input('\n\n¿Desea hacer mas consultas? (si / no): '))
+            choice = str(input(''))
             if (choice.__eq__('si')):
                 result = True
                 choice_succeded = True
@@ -177,7 +157,6 @@ def more_querys() -> bool:
         except ValueError:
             print('\n\nIntroduce una opcion valida (si / no)')
 
-    
     return result
 
 # Función main, representa el hilo principal o main del programa1
@@ -188,35 +167,50 @@ def main():
 
         os.system('cls')
         running = True
+        new_user_choice = True
 
         while (running):
-            # Primero se deberá elegir el usuario, y acto seguido abrir la conexion con la base de datos
-            try:
-                connection_establishment(user_choice())
-            except (psycopg2.OperationalError):
-                print('Error en la conexion a la base de datos')
-                running = False
-                print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR FALLO DE CONEXION]=-----------------\n\n')
-                break
+            # Primero se deberá elegir el usuario (en caso de que sea la primera vez o que se quiera cambiar de usuario), y acto seguido abrir la conexion con la base de datos
+            if (new_user_choice):
+                try:
+                    connection_establishment(user_choice())
+                except (psycopg2.OperationalError):
+                    print('Error en la conexion a la base de datos')
+                    running = False
+                    print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR FALLO DE CONEXION]=-----------------\n\n')
+                    break
             # Una vez metidos en la base de datos, elegimos que consulta queremos hacer
-            query_type = query_choice()
-            if (query_type.__eq__(1)):
-                sql_command = str(input('Introduce la consulta a realizar (tipo select): '))
-                select_query(sql_command)
-            elif (query_type.__eq__(2)):
-                sql_command = str(input('Introduce la consulta a realizar (tipo insert): '))
-                insert_query(sql_command)
+            sql_query = str(input('\nIntroduce la consulta a realizar: '))
+            # Dependiendo de la consulta introducida haremos una función u otra
+            sql_query_splitted = sql_query.split(' ')
+            if (sql_query_splitted[0].__eq__('select' or 'SELECT')):
+                select_query(sql_query)
+            else:
+                # Como no es un select, seguiremos el itinerario de una consulta de tipo insert
+                insert_query(sql_query)
             # Preguntaremos al usuario si quiere hacer mas consultas
-            if more_querys().__eq__(False):
-                print('Cerrando...')
+            print('\n\n¿Desea hacer mas consultas? (si / no): ')
+            if yes_or_no_choice().__eq__(False):
+                print('\n\nCerrando...')
                 connection_termination()
                 time.sleep(0.5)
                 print('\n\t\t-----------------=[PROGRAMA FINALIZADO]=-----------------\n\n')
                 running = False
+            else:
+                # Preguntaremos al usuario si desea cambiar de usuario, en caso afirmativo volverá a elegir usuario, y en caso negativo seguirá haciendo
+                # consultas con el mismo usuario que eligió la ultima vez
+                print('\n\n¿Desea cambiar de usuario? (si / no)')
+                if yes_or_no_choice().__eq__(False):
+                    new_user_choice = False
+                    # Hacemos un rollback para no tener error de transacción
+                    connection.rollback()
+                else:
+                    new_user_choice = True
+            os.system('cls')
+            
     except KeyboardInterrupt:
         print('\n\n\t\t-----------------=[PROGRAMA FINALIZADO POR TECLADO]=-----------------\n\n')
         
-
 # ------------=[PROGRAMA PRINCIPAL]=------------
 
 main()

@@ -14822,26 +14822,18 @@ GRANT INSERT, UPDATE, DELETE, SELECT ON ALL TABLES IN SCHEMA peliculas TO gestor
 
 -- Funcion auxiliar para dar permisos a critico para insertar en auditoria
 
-CREATE OR REPLACE FUNCTION peliculas.da_permiso_critico()
-RETURNS void
-SECURITY DEFINER
-AS
-$BODY$
+CREATE OR REPLACE FUNCTION peliculas.da_permiso_critico_audit() RETURNS void SECURITY DEFINER AS $BODY$
 BEGIN
-GRANT INSERT ON peliculas.auditoria TO critico;
+    GRANT INSERT ON peliculas.auditoria TO critico;
 END;
 $BODY$
 LANGUAGE plpgsql;
 
--- Funcion auxiliar
+-- Funcion auxiliar para quitar permisos a critico para insertar en auditoria
 
-CREATE OR REPLACE FUNCTION peliculas.quita_permiso_critico()
-RETURNS void
-SECURITY DEFINER
-AS
-$BODY$
+CREATE OR REPLACE FUNCTION peliculas.quita_permiso_critico_audit() RETURNS void SECURITY DEFINER AS $BODY$
 BEGIN
-REVOKE INSERT ON peliculas.auditoria FROM critico;
+    REVOKE INSERT ON peliculas.auditoria FROM critico;
 END;
 $BODY$
 LANGUAGE plpgsql;
@@ -14852,7 +14844,7 @@ CREATE OR REPLACE FUNCTION peliculas.fn_auditoria() RETURNS TRIGGER AS $fn_audit
 BEGIN
 
     IF current_user = 'critico' THEN
-        PERFORM peliculas.da_permiso_critico();
+        PERFORM peliculas.da_permiso_critico_audit();
 
     END IF;
 
@@ -14868,7 +14860,7 @@ BEGIN
     END IF;
 
     IF current_user = 'critico' THEN
-        PERFORM peliculas.quita_permiso_critico();
+        PERFORM peliculas.quita_permiso_critico_audit();
 
     END IF;
 
@@ -14961,9 +14953,27 @@ CREATE TRIGGER tg_paginaweb_audit
     FOR EACH ROW
     EXECUTE PROCEDURE peliculas.fn_auditoria();
 
+-- Funcion auxiliar para dar permisos a critico para insertar en pag_web
+
+CREATE OR REPLACE FUNCTION peliculas.da_permiso_critico_pagweb() RETURNS void SECURITY DEFINER AS $BODY$
+BEGIN
+    GRANT INSERT ON peliculas.pag_web TO critico;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
+-- Funcion auxiliar para quitar permisos a critico para insertar en pag_web
+
+CREATE OR REPLACE FUNCTION peliculas.quita_permiso_critico_pagweb() RETURNS void SECURITY DEFINER AS $BODY$
+BEGIN
+    REVOKE INSERT ON peliculas.pag_web FROM critico;
+END;
+$BODY$
+LANGUAGE plpgsql;
+
 -- Cuando se inserta una critica, en el caso de que la pagina web no esté en la tabla de pag_web, se deberá añadir dicha pagina a la tabla
 
-CREATE OR REPLACE FUNCTION peliculas.fn_inserta_critica() RETURNS TRIGGER SECURITY DEFINER AS $fn_inserta_critica$
+CREATE OR REPLACE FUNCTION peliculas.fn_inserta_critica() RETURNS TRIGGER AS $fn_inserta_critica$
 
 BEGIN
 
@@ -14988,10 +14998,22 @@ BEGIN
     
     -- Si se ha llegado hasta este punto podemos asegurar que la consulta es correcta y contiene todo los campos necesarios para insertar, ahora debemos comprobar
     -- si la pagina web está presente en la pagina web, o si no añadirla, al igual que el titulo y año de la pelicula que esten presentes en la tabla de peliculas
+    
+    -- En caso de que esta función la ejecute el critico, le daremos permisos para insertar en pag_web para que en auditoria salga que la ha insertado el critico en
+    -- lugar del usuario postgres
 
     IF NEW.nombre_pag_web NOT IN (SELECT nombre FROM peliculas.pag_web) THEN
         -- Se verifica que la pagina web no está en la tabla de peliculas.pag_web, por tanto tenemos que añadirla
+        IF current_user = 'critico' THEN
+        PERFORM peliculas.da_permiso_critico_pagweb();
+        END IF;
+
         INSERT INTO peliculas.pag_web(nombre) VALUES (NEW.nombre_pag_web);
+
+        IF current_user = 'critico' THEN
+        PERFORM peliculas.quita_permiso_critico_pagweb();
+        END IF;
+        
     END IF;
 
     RETURN NEW;
